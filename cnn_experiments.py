@@ -1,4 +1,8 @@
 import tensorflow as tf
+# GPU memory management
+gpus = tf.config.experimental.list_physical_devices('GPU')
+for gpu in gpus:
+    tf.config.experimental.set_memory_growth(gpu, True)
 from tensorflow import keras
 from tensorflow.keras.callbacks import EarlyStopping
 import matplotlib.pyplot as plt
@@ -6,6 +10,7 @@ import itertools
 import pandas as pd
 import os
 from datetime import datetime
+
 
 ######### Dataset ##########################################################################################
 
@@ -159,6 +164,12 @@ for activation, optimizer, dropout_rate, l1_reg, l2_reg in param_combinations:
     plt.savefig(plot_filename, dpi=150, bbox_inches="tight")
     plt.close()   # close the figure to free memory (important inside loops)
     print(f"Saved plot: {plot_filename}")
+
+    from tensorflow.keras import backend as K
+    import gc
+    K.clear_session()
+    del model
+    gc.collect()
 
 # 7. Results summary table
 df_results = pd.DataFrame(results)
