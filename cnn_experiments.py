@@ -33,7 +33,7 @@ X_test  = X_test[...,  None]
 
 # Create all combinations of parameters
 
-activation_list = ['relu', keras.layers.LeakyReLU(alpha=0.1), 'tanh']
+activation_list = ['relu', keras.layers.LeakyReLU(negative_slope=0.1), 'tanh']
 optimizer_list = ['adam', 'sgd', 'rmsprop']
 dropout_rate_list = [None, 0.3, 0.5]
 l1_reg_list = [None, 0.001, 0.005]
@@ -48,9 +48,21 @@ param_combinations = list(itertools.product(
     l2_reg_list
 ))
 
+# Subtesting combinations of parameters to avoid crashin due to GPU memory limits
+start = 0
+end = 50
+param_combinations = param_combinations[start:end]
+timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+
+# Create a dedicated folder for this batch’s plots
+os.makedirs("results_CNN", exist_ok=True)
+plot_dir = f"results_CNN/plots_{start}-{end}_{timestamp}"
+os.makedirs(plot_dir, exist_ok=True)
+
+csv_path = f"results_CNN/cnn_experiments_{start}-{end}_{timestamp}.csv"
+
 results = []  # to store results for each experiment
 run_id = 0    # counter for labeling runs
-os.makedirs("results_CNN/plots", exist_ok=True)
 
 
 # Function to build CNN model with given parameters
@@ -124,7 +136,7 @@ for activation, optimizer, dropout_rate, l1_reg, l2_reg in param_combinations:
     history = model.fit(
         X_train, y_train,
         epochs=20,
-        batch_size=128,
+        batch_size=64,
         validation_data=(X_valid, y_valid),
         callbacks=[early_stop],
         verbose=0
@@ -160,10 +172,16 @@ for activation, optimizer, dropout_rate, l1_reg, l2_reg in param_combinations:
     plt.grid(True)
 
     # Save the plot to file
-    plot_filename = f"results_CNN/plots/run_{run_id}_acc_plot.png"
+    plot_filename = f"{plot_dir}/run_{run_id}_acc_plot.png"
     plt.savefig(plot_filename, dpi=150, bbox_inches="tight")
     plt.close()   # close the figure to free memory (important inside loops)
     print(f"Saved plot: {plot_filename}")
+
+    # Checkpoint: save intermediate results every 10 runs
+    if run_id % 10 == 0:
+    df_partial = pd.DataFrame(results)
+    df_partial.to_csv(csv_path, index=False)
+    print(f"Checkpoint saved at run {run_id}")
 
     from tensorflow.keras import backend as K
     import gc
@@ -176,10 +194,6 @@ df_results = pd.DataFrame(results)
 df_results = df_results.sort_values(by="Val_Accuracy", ascending=False).reset_index(drop=True)
 
 print("\n Experiment Summary (sorted by validation accuracy):")
-
-timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-csv_path = f"results_CNN/cnn_experiments_{timestamp}.csv"
-
 
 # Save results
 df_results.to_csv(csv_path, index=False)
