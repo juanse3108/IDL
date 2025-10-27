@@ -28,17 +28,12 @@ X_test  = X_test[...,  None]
 
 # Create all combinations of parameters
 
-#activation_list = ['relu', keras.layers.LeakyReLU(alpha=0.1), 'tanh']
-#optimizer_list = ['adam', 'sgd', 'rmsprop']
-#dropout_rate_list = [None, 0.3, 0.5]
-#l1_reg_list = [None, 0.001, 0.005]
-#l2_reg_list = [None, 0.001, 0.005]
+activation_list = ['relu', keras.layers.LeakyReLU(alpha=0.1), 'tanh']
+optimizer_list = ['adam', 'sgd', 'rmsprop']
+dropout_rate_list = [None, 0.3, 0.5]
+l1_reg_list = [None, 0.001, 0.005]
+l2_reg_list = [None, 0.001, 0.005]
 
-activation_list = ['relu']
-optimizer_list = ['adam']
-dropout_rate_list = [None]
-l1_reg_list = [None]
-l2_reg_list = [None]
 
 param_combinations = list(itertools.product(
     activation_list,
@@ -123,7 +118,7 @@ for activation, optimizer, dropout_rate, l1_reg, l2_reg in param_combinations:
     # 3. Training
     history = model.fit(
         X_train, y_train,
-        epochs=30,
+        epochs=20,
         batch_size=128,
         validation_data=(X_valid, y_valid),
         callbacks=[early_stop],
