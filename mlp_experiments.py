@@ -109,7 +109,7 @@ for activation, optimizer, dropout_rate, l1_reg, l2_reg in param_combinations:
     # 3. Training
     history = model.fit(
         X_train, y_train,
-        epochs=1,
+        epochs=20,
         batch_size=128,
         validation_data=(X_valid, y_valid),
         callbacks=[early_stop],
