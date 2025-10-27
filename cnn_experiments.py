@@ -179,9 +179,9 @@ for activation, optimizer, dropout_rate, l1_reg, l2_reg in param_combinations:
 
     # Checkpoint: save intermediate results every 10 runs
     if run_id % 10 == 0:
-    df_partial = pd.DataFrame(results)
-    df_partial.to_csv(csv_path, index=False)
-    print(f"Checkpoint saved at run {run_id}")
+        df_partial = pd.DataFrame(results)
+        df_partial.to_csv(csv_path, index=False)
+        print(f"Checkpoint saved at run {run_id}")
 
     from tensorflow.keras import backend as K
     import gc
