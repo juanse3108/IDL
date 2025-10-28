@@ -49,8 +49,8 @@ param_combinations = list(itertools.product(
 ))
 
 # Subtesting combinations of parameters to avoid crashin due to GPU memory limits
-start = 149
-end = 200
+start = 200
+end = 243
 param_combinations = param_combinations[start:end]
 timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
 
