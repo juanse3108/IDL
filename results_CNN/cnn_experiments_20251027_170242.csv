@@ -1,2 +1,0 @@
-Run,Activation,Optimizer,Dropout,L1_reg,L2_reg,Val_Accuracy,Val_Loss,Test_Accuracy,Test_Loss
-1,relu,adam,,,,0.9258333444595337,0.21202728152275085,0.921999990940094,0.23933273553848267
